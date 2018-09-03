@@ -143,12 +143,20 @@ $(function () {
     socket.on("game can begin" , function(data){
         socket.emit("request games");
         socket.emit("send timer", {timer : data.timer});
+        socket.emit("send lobby data");
+    });
+
+    socket.on("sending players" , function(data){
+        console.log(data.lobby);
+        data.lobby.sockets.forEach(function(socket){
+                appendText("#player-game-list" , "<div class='card' id='player'><div class='card-header'>" + socket.username + "</div><div class='card-body'><p class='card-text'>Score : " + socket.score + "</p></div></div>");            
+        });
     });
 
     socket.on("sending timer" , function(data){
         if(data.timer === 0){
             $('#chat-aria').transition('horizontal flip');
-            $('#game-aria').transition('slide down');
+            $(".ui.grid#game-aria").css("display"  , "flex");
         }
         else{
             $("#timer-message").text(data.timer);

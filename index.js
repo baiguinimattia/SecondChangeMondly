@@ -102,7 +102,6 @@ io.on("connection" , function(socket){
         removeEmptyRooms();
         newSocket(socket , data);
     });
-
     socket.on("create specific room" , function(data){
         findSocketById(socket.id,  function(foundSocket){
             createLobby(foundSocket , data , function(createdLobby){
@@ -181,6 +180,8 @@ io.on("connection" , function(socket){
                 updateLobby(foundLobby);
                 socket.to('room-' + foundLobby.roomNo).emit('is ready', {username : foundSocket.username , lobby : foundLobby});
                 if(foundLobby.pressedReady.length === foundLobby.sockets.length){
+                    foundLobby.ifInGame = true;
+                    updateLobby(foundLobby);
                     io.in('room-' + foundLobby.roomNo).emit('game can begin' , {timer : 5});
                 }
             });
@@ -200,6 +201,18 @@ io.on("connection" , function(socket){
         findSocketById(socket.id , function(foundSocket){
             io.to(foundSocket.socketId).emit('sending timer', {timer : data.timer});
         });
+
+    });
+
+    socket.on("send lobby data" , function(data){
+        findSocketById(socket.id , function(foundSocket){
+            getLobbyByRoom(foundSocket.roomNo , function(foundLobby){
+                io.to(foundSocket.socketId).emit('sending players', {lobby : foundLobby});
+            });
+        });
+    });
+
+    socket.on("game has started" , function(data){
 
     });
 
@@ -306,7 +319,6 @@ function getCountryTag(country , callback){
             console.log(err);
         }
         else{
-            console.log(foundCountry[0]);
             callback(foundCountry[0].tag);
         }
     });
@@ -381,7 +393,17 @@ function getLobbiesByLang(language , callback){
             console.log(err);
         }
         else{
-            callback(foundLobbies);
+            var i ;
+            let lobbiesList = [];
+            for(i = 0 ; i < foundLobbies.length ; i++){
+                if(!foundLobbies[i].ifInGame){
+                    lobbiesList.push(foundLobbies[i]);
+                };
+            };
+            if(i === foundLobbies.length ){
+                callback(lobbiesList);
+            };
+
         };
     });
 };
@@ -414,7 +436,7 @@ function updateLobby(lobby){
             console.log(err);
         }
         else{
-            console.log("lobby updated" , foundLobby);
+            console.log("lobby updated");
         };
     });
 };
@@ -425,7 +447,13 @@ function findSocketById(id , callback){
             console.log(err);
         }
         else{
-            callback(foundSocket[0]);
+            if(foundSocket === undefined){
+                console.log("e undefined");
+            }
+            else{
+                console.log("e undefined" , foundSocket[0]);
+                callback(foundSocket[0]);
+            };
         };
     });
 };

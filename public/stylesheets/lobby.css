@@ -65,6 +65,17 @@
     margin-left: 10%;
 }
 
+#game-board{
+    overflow : auto;
+    background-color: white;
+    border: 1px solid #286895;
+    width: 80%;
+    height: 80%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 10%;
+}
+
 #input-aria{
     background-color: #fff;
     border: 1px solid #286895;
@@ -73,10 +84,20 @@
     margin-left: 10%;
 }
 
+.ui.grid#game-aria{
+    display: none;
+}
+
 #chat-aria{
     margin-top: 2%;
     height : 80%;
 }
+
+#game-aria{
+    margin-top: 2%;
+    height : 80%;
+}
+
 #send-message{
     float : right;
     margin-top: 5px;
@@ -130,6 +151,21 @@
     border: 1px solid #286895;
     height: 106.8%;
     width: 100%;
+}
+
+#player-game-list{
+    background-color: #fff;
+    margin-right: 10%;
+    margin-left : -30%;
+    margin-bottom : -0.5%;
+    border: 1px solid #286895;
+    height: 80%;
+    width: 100%;
+    margin-top: 1.5%;
+}
+
+.row#player-game-list{
+    height: 100%;
 }
 
 #input-game{
