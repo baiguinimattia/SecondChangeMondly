@@ -1,0 +1,186 @@
+
+.ui.button.attached{
+    width: 40%;
+    height: 20%;
+    margin: 10px 30%;
+    background: #286895;
+    font-size: 23px;
+    color: #fff;
+
+    
+}
+.ui.attached.top.button{
+    border-radius : 25px;
+}
+.ui.attached.bottom.button{
+    border-radius : 25px;
+}
+
+#choosing-button{
+    margin: 0 44%;
+    width: 10%;
+    border-radius: 65%;
+    background: linear-gradient(to bottom,#f1f8fe,#d4dfea);
+    color: #286895;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+#choosing-section{
+    margin-top: 5%;
+    height: 40%;
+}
+
+#modal-title{
+    color:  #286895;
+    font-size: 25px;
+}
+
+#send-message {
+    background-color: #286895;
+    color: #fff;
+}
+
+#top-menu{
+    width: 80%;
+    margin-left: 10%;
+    height: 10%;
+    background-color: white;
+    border: 1px solid  #286895;
+}
+#room-name{
+    color: #286895;
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 600;
+}
+#message-aria{
+    overflow : auto;
+    background-color: white;
+    border: 1px solid #286895;
+    width: 80%;
+    height: 80%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 10%;
+}
+
+#input-aria{
+    background-color: #fff;
+    border: 1px solid #286895;
+    width: 80%;
+    height: 100px;
+    margin-left: 10%;
+}
+
+#chat-aria{
+    margin-top: 2%;
+    height : 80%;
+}
+#send-message{
+    float : right;
+    margin-top: 5px;
+    margin-right: 10px;
+    height: 40%;
+    width: 15%;
+}
+
+#leave-room{
+    float : right;
+    margin-top: -31px;
+    margin-right: 10px;
+    height: 40%;
+    width: 15%;
+    background-color: #286895;
+    color: #fff;
+}
+#message{
+    margin-left: 2%;
+    margin-top: 15px;
+    font-size: 20px;
+    padding: 5px;
+    width: 80%;
+    height: 70%;
+    border : 2px solid #286895;
+}
+
+.card-header{
+    color: #286895;
+    font-size: 20px;
+    font-weight: 700;
+    text-align : center;
+    border : 1px solid #286895;
+}
+.card-body{
+    border: 1px solid #286895;
+    color: #286895;
+}
+
+
+.ui.two.column.grid{
+    height: 100%;
+    width: 100%;
+}
+
+#player-list{
+    background-color: #fff;
+    margin-right: 10%;
+    margin-left : -30%;
+    margin-bottom : -0.5%;
+    border: 1px solid #286895;
+    height: 106.8%;
+    width: 100%;
+}
+
+#input-game{
+    height: 16%;
+    background-color: #fff;
+    border: 1px solid #286895;
+    width: 100%;
+    margin-left: -30%;
+    margin-top: 2%;
+}
+
+.row.player-list{
+    height: 100%;
+
+}
+
+#lobbies{
+    height: 200px;
+    background-color: #fff;
+    color: #286895;
+    border-radius: 30px;
+    overflow: auto;
+    border: 2px solid #286895;
+}
+
+#leave-p{
+    line-height: 0.75;
+}
+
+
+.ui.cards{
+    width: 50%;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.ui.cards > .card{
+    background: linear-gradient(to bottom,#f1f8fe,#d4dfea);
+}
+
+.ui.vertical.segment{
+    margin-left: 10px;
+    color: #286895;
+    font-size: 20px;
+    font-weight: 500;
+    border: none;
+}
+
+.right{
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+

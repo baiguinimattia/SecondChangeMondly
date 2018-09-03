@@ -1,0 +1,35 @@
+<% include partials/header%>
+<% include partials/navbar%>
+        <form class="ui form" action="/register" method="POST">
+                <div class="field">
+                  <label>First Name</label>
+                  <input type="text" name="firstname" id="name" placeholder="First Name" required>
+                </div>
+                <div class="field">
+                  <label>Last Name</label>
+                  <input type="text" name="lastname" id="last-name" placeholder="Last Name" required>
+                </div>
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text" name="username" id="username" placeholder="Username" required>
+                </div>
+                <div class="field">
+                        <label>Password</label>
+                        <input type="password" name="password" id="password" placeholder="Password" required>
+                </div>
+                <div class="field">
+                    <label for="search-bar">Native language</label>
+                        <div class="ui big fluid search" id="search-bar">
+                                        <input class="prompt" type="text" name="language" id="language" placeholder="Native language" required>
+                                        <div class="results"></div>
+                        </div>
+                </div>
+
+                <button class="ui  button" id="btn-register">Register</button>
+    </form>
+
+
+<% include partials/scripts%>
+<link rel="stylesheet" href="/stylesheets/register.css">
+<script src="register.js"></script>
+<% include partials/footer%>

@@ -1,0 +1,61 @@
+.ui.form{
+    width: 20%;
+    margin-top : 50px;
+    margin : 50px 40%;
+    color: #fff;
+}
+.ui.form{
+    padding-top: 30px;
+    padding-bottom: 30px;
+    width: 50%;
+    margin: 50px 25%;
+}
+
+.ui.form .field > label {
+    color: #ff420e;
+}
+
+input{
+    border-radius: 30px;
+    border-color: #95acbf;
+    display: block;
+
+}
+
+.ui.button#btn-register{
+    width: 90%;
+    margin: 0 5%;
+    margin-top: 20px;
+    background: #286895;
+    font-size: 23px;
+    border-radius: 20px;
+    color: #fff;
+}
+
+.ui.button#btn-login{
+    width: 90%;
+    margin: 0 5%;
+    margin-top: 20px;
+    background: #286895;
+    font-size: 23px;
+    border-radius: 20px;
+    color: #fff;
+}
+
+.ui.form input[type="text"]{
+    border: solid 1px  #95acbf;
+    color: #495057;
+}
+.ui.form input[type="password"]{
+    border: solid 1px  #95acbf;
+    color: #495057;
+}
+
+.ui.form .field > label{
+    color: #495057;
+}
+.ui.search > .results .result .title{
+    color: #286895;
+}
+
+

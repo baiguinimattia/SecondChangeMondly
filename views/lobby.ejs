@@ -1,0 +1,132 @@
+<% include partials/header%>
+<% include partials/navbar%>
+
+<div class="container" id="choosing-section">
+        <div class="ui top attached button" tabindex="0" id="find-lobby" data-toggle= "modal" data-target="#finding-aria" >Join one of the preexisting lobbies.</div>
+        <button class="ui disabled button" id="choosing-button">OR</button>
+        <div class="ui bottom attached button" tabindex="0" id="create-lobby" data-toggle="modal" data-target="#creation-aria">Create your own lobby.</div>
+</div>
+
+<div class="modal fade" id="finding-aria" tabindex="-1" role="dialog" aria-labelledby="finding-aria" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                        <h5 class="modal-title" id="modal-title">Details</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                        </button>
+                                </div>
+                              
+                                <div class="modal-body">
+                                        <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon1">Choose your language</span>
+                                                </div>  
+                                                <select class="ui dropdown" id="finding-dropdown">
+                                                        <option value=""></option>
+                                                        <option value="2">Romanian</option>
+                                                        <option value="1">English</option>
+                                                        <option value="0">French</option>
+                                                </select>
+                                        </div>
+        
+                                </div>
+                                <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary" id="btn-find">Find rooms</button>
+                                </div>
+                        </div>
+                </div>
+        </div>
+
+<div class="modal fade" id="creation-aria" tabindex="-1" role="dialog" aria-labelledby="creation-aria" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <h5 class="modal-title" id="modal-title">Details</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                </button>
+                        </div>
+                      
+                        <div class="modal-body">
+                                <div class="input-group mb-3" id="input-lobby-name">
+                                        <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1">Choose name</span>
+                                        </div>
+                                        <input type="text" class="form-control" id="lobby-name" placeholder="Lobby's name">
+                                </div> 
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1">Choose your language</span>
+                                        </div>  
+                                        <select class="ui dropdown" id="creation-dropdown">
+                                                <option value=""></option>
+                                                <option value="2">Romanian</option>
+                                                <option value="1">English</option>
+                                                <option value="0">French</option>
+                                        </select>
+                                </div>
+
+                        </div>
+                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" id="btn-create" data-dismiss="modal">Create room</button>
+                                        <!-- <button type="button" class="btn btn-primary" id="btn-create">Create room</button> -->
+                        </div>
+                </div>
+        </div>
+</div>
+
+
+<div class="container hidden" id="lobby-list">
+        <div id="lobbies">
+                <div class='ui cards'>
+
+                </div>
+        </div>
+</div>
+
+<div class="row hidden" id="chat-aria">
+        <div class="ui two column grid">
+                <div class="row">
+                          <div class="twelve wide column">
+                                <div id="top-menu">
+                                        <h2 id="room-name">Room name</h2>
+                                </div>
+                                <div id="message-aria">
+                                                        
+                                </div>
+                                <div id="input-aria">
+                                        <input type="text" placeholder="Enter message" id="message">
+                                        <button class="ui button" id="send-message"><i class="paper plane">Send</i></button>
+                                        <button class="ui button" id="leave-room"><p id="leave-p">Leave lobby</p></button>
+                                </div>
+                          </div>
+                          <div class="four wide column">
+                                <div class="row player-list">
+                                        <div id="player-list">
+                                                
+                                        </div>
+                                </div>
+
+                          </div>
+                </div>
+
+        </div>
+</div>
+
+<div class="container hidden" id="game-aria">
+
+</div>
+
+<div class="ui dimmer">
+        <div class="content">
+                <h1 class="ui inverted header" id="timer-message"></h2>
+        </div>
+</div>
+
+<% include partials/scripts%>
+<link rel="stylesheet" href="/stylesheets/lobby.css">
+<script src="/socket.io/socket.io.js"></script>
+<script src="lobby.js"></script>
+<% include partials/footer%>

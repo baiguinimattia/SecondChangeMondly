@@ -1,0 +1,8 @@
+body{
+    background: linear-gradient(to bottom,#f1f8fe,#d4dfea);
+    color : #fff;
+}
+
+.hidden{
+    display : none;
+}
