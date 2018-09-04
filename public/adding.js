@@ -1,5 +1,5 @@
 $("#add-exercise").click(function(event){
-    let url = "/exercise/add";
+    let url = "/game/add";
     let game = {};
     
     if($("#statement").val() != ""){

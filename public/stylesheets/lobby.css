@@ -55,14 +55,28 @@
     font-weight: 600;
 }
 #message-aria{
+    background-image: url(../img/bg_messages.png);
     overflow : auto;
     background-color: white;
     border: 1px solid #286895;
+    border-radius: 5px;
     width: 80%;
     height: 80%;
     margin-top: 5px;
     margin-bottom: 5px;
     margin-left: 10%;
+}
+
+.message-bubble{
+    display:inline-block;
+    border-radius: 30px;
+    border:1 solid black;
+    background-color: grey;
+}
+
+.message-text{
+    padding: 0 10px;
+    color: white;
 }
 
 #game-board{

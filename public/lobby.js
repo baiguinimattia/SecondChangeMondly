@@ -37,6 +37,7 @@ $(function () {
         $("#player-list").text("");
         console.log(data.message , data.lobby);
         data.lobby.sockets.forEach(function(socket){
+            console.log("sa vedem ce cate ori intra" , socket.username);
             if(socket.username === username){
                 findIfReady(username , data.lobby.pressedReady , function(ifReady){
                     if(ifReady){
@@ -104,12 +105,12 @@ $(function () {
     });
 
     socket.on("joined empty room" , function(data){
-        appendText("#message-aria" , "<div class='ui vertical segment'><p>" + data.message + "</div>");
+        appendText("#message-aria" , "<div class='ui vertical segment'><div class='message-bubble'><p class=message-text>" + data.message + "</p></div></div>");
     });
 
     socket.on("new user joined" , function(data){
         $('body').dimmer('hide');
-        appendText("#message-aria" , "<div class='ui vertical segment'><p>" + data.message + "</div>");
+        appendText("#message-aria" , "<div class='ui vertical segment'><div class='message-bubble'><p>" + data.message + "</p></div></div>");
     });
 
 
@@ -135,10 +136,10 @@ $(function () {
 
     socket.on("new message" , function(data){
         if(data.location === "right"){
-            appendText("#message-aria" , "<div class='ui vertical segment '><p class='right'>" + data.message + "</div>");
+            appendText("#message-aria" , "<div class='ui vertical segment '><div class='message-bubble'><p class='right'>" + data.message + "</p></div></div>");
         }
         else{
-            appendText("#message-aria" , "<div class='ui vertical segment '><p>" + data.message + "</div>");            
+            appendText("#message-aria" , "<div class='ui vertical segment '><div class='message-bubble'><p>" + data.message + "</p></div></div>");            
         }
     });
 
@@ -151,6 +152,12 @@ $(function () {
         socket.emit("send timer", {timer : data.timer});
         socket.emit("send lobby data");
     });
+
+    socket.on("sending game data" , function(data){
+        console.log("vine jocul" , data.game);
+        appendGame(data.game);
+    });
+
 
     socket.on("sending players" , function(data){
         console.log(data.lobby);
@@ -225,6 +232,6 @@ function findIfReady(username , array , callback){
     };
 };
 
-function appendReadyButtons(lobby , username , socket){
-
+function appendGame(game){
+    appendText("#game-board" , "<div class='ui cards'><div class='card'><div class='image'><img src='" + "/img/" + data.image + ".jpg" + "' id='image-game'></div><div class='content'><div class='meta'><button class='ui basic green button'></button></div><div class='description' id='game-statemenet'>" + game.statement + "</div></div><div class='extra content'><div class='ui for buttons'><div class='ui basic green button'>" + game.variants[0] + "</div><div class='ui basic red button'>" + game.variants[1] + "</div><div class='ui basic green button'>" + game.variants[2] + "</div><div class='ui basic red button'>" + game.variants[4] + "</div></div></div></div></div>");
 };

@@ -7,7 +7,7 @@ var LobbySchema  = new mongoose.Schema({
     owner : String,
     ifInGame : {type : Boolean , default : false},
     sockets : {type : Array , default : []},
-    currentGame : {type : Number , default : 0},
+    currentGame : {type : Number , default : 0}, 
     pressedReady : { type : Array , default : []}
 });
 

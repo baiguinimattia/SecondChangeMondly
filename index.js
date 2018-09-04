@@ -16,6 +16,7 @@ app.set("view engine" , "ejs");
 let middleware = require("./middleware/index");
 let userRoutes = require("./routes/index");
 
+let Game = require("./models/game");
 let Country = require("./models/country");
 let User = require("./models/user");
 let Socket = require("./models/socket");
@@ -80,6 +81,15 @@ app.get("/countries" , function(req , res){
     });
 
 });
+
+app.get("/add" , function(req , res){
+    res.render("adding");
+});
+
+app.post("/game/add" , function(req , res){
+    addGame(req.body.game);
+});
+
 
 function getCountries(callback){
     let arrayCountries = new Array();
@@ -165,7 +175,7 @@ io.on("connection" , function(socket){
             getLobbyByRoom(foundSocket.roomNo , function(foundLobby){
                 let url = "/";
                 foundSocket.roomNo = 0;
-                foundSocket.pressedReady = [];
+                foundLobby.pressedReady = [];
                 updateSocket(foundSocket);
                 removeSocketFromRoom(foundSocket , foundLobby , function(updatedLobby){
                     console.log("after leave din removeSocket" ,updatedLobby);
@@ -224,8 +234,23 @@ io.on("connection" , function(socket){
         });
     });
 
-    socket.on("game has started" , function(data){
-
+    socket.on("request games" , function(data){
+            findSocketById(socket.id , function(foundSocket){
+                getLobbyByRoom(foundSocket.roomNo , function(foundLobby){
+                    getGamesByLanguage(foundLobby.language , function(foundGames){
+                        if(foundGames.length){
+                            if(foundLobby.currentGame === 9){
+                                io.in("room-" + foundLobby.roomNo).emit('sending game data', {game : foundGames[0] , ifLast : false});    
+                            }
+                            else{
+                                io.in("room-" + foundLobby.roomNo).emit('sending game data', {game : foundGames[0] , ifLast : true});
+                            }
+                            foundLobby.currentGame +=1;
+                            updateLobby(foundLobby);
+                        };  
+                    });
+                });
+            });
     });
 
     socket.on("disconnect" , function(){
@@ -251,6 +276,26 @@ io.on("connection" , function(socket){
         });        
     }); 
 });
+
+function getGamesByLanguage(language , callback){
+    Game.find({language : language} , function( err , foundGames){
+        if(err){
+            console.log(err);
+        }
+        else{
+            if(foundGames.length){
+                callback(foundGames);
+            }
+            else{
+                console.log("no game");
+            };
+        };
+    });
+};
+
+
+
+
 
 function resetReadyStatus(lobby , callback){
     lobby.pressedReady = [];
@@ -329,9 +374,9 @@ function removeSocketFromRoom(socket , room , callback){
     if(room != undefined){
         for(let i = 0 ; i < room.sockets.length ; i++){
             if(room.sockets[i].socketId === socket.socketId){
-                console.log("before splice" , room.sockets);
+                console.log("before splice" , room);
                 room.sockets.splice(i , 1);
-                console.log("after splice" , room.sockets);
+                console.log("after splice" , room);
                 callback(room);
             };
         };
@@ -512,6 +557,51 @@ function isEmpty(obj) {
     }
     return true;
 };
+
+
+function addGame(data){
+    let newGame = {};
+    newGame.statement = data.statement;
+    newGame.response = data.response;
+
+    newGame.variants = [];
+    if(data.variantOne){
+        newGame.variants.push(data.variantOne);
+    };
+    if(data.variantTwo){
+        newGame.variants.push(data.variantTwo);
+    };
+    if(data.variantThree){
+        newGame.variants.push(data.variantThree);
+    };
+    if(data.variantFor){
+        newGame.variants.push(data.variantFor);
+    };
+    if(data.index){
+        newGame.index = data.index;
+    };
+    if(data.instruction){
+        newGame.instruction = data.instruction;
+    };
+    if(data.image){
+        newGame.image = data.image;
+    };
+    if(data.type){
+        newGame.type = data.type;
+    };
+    if(data.language){
+        newGame.language = data.language;
+    };
+    Game.create(newGame,function( error, newGame){
+        if(error){
+                console.log(error);
+        }
+        else{
+                console.log("Game created");
+        };
+    });
+};
+
 function translateText(text , target , callback){
     translate
     .translate(text , target)

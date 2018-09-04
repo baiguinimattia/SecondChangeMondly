@@ -1,0 +1,50 @@
+<% include partials/header%>
+<% include partials/navbar%>
+
+<div class="container">
+    <form class="ui form">
+        <div class="field">
+          <label>Statement</label>
+          <input type="text" name="statement" id="statement" placeholder="Statement" required>
+        </div>
+        <div class="field">
+            <label>image</label>
+            <input type="text" name="image" id="image" placeholder="image" required>
+        </div>
+        <div class="field">
+            <label>Variants</label>
+            <input type="text" name="variant" id="variant-one" placeholder="variant" required>
+            <input type="text" name="variant" id="variant-two" placeholder="variant" required>
+            <input type="text" name="variant" id="variant-three" placeholder="variant">
+            <input type="text" name="variant" id="variant-for" placeholder="variant">
+        </div>
+        <div class="field">
+            <label>Response</label>
+            <input type="text" name="response" id="response" placeholder="Response" required>
+        </div>
+
+        <div class="field">
+            <label>language</label>
+            <input type="text" name="language" id="language" placeholder="language" required>
+        </div>
+        <div class="field">
+            <label>Instructions</label>
+            <input type="text" name="instruction" id="instruction" placeholder="Instructions" required>
+        </div>
+        <div class="field">
+            <label>index</label>
+            <input type="text" name="index" id="index" placeholder="index" required>
+        </div>
+        <div class="field">
+            <label>Type</label>
+            <input type="text" name="type" id="type" placeholder="Type" required>
+        </div>
+        <button class="ui button" id="add-exercise">Submit</button>
+    </form>
+</div>
+
+
+
+<% include partials/scripts%>
+<script src="adding.js"></script>
+<% include partials/footer%>
