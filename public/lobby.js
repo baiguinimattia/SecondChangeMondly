@@ -35,7 +35,7 @@ $(function () {
     socket.on("sending lobby data" , function(data){
         $("#room-name").text(data.lobby.name);
         $("#player-list").text("");
-        console.log(data.lobby);
+        console.log("in sending lobby data" , data.lobby);
         data.lobby.sockets.forEach(function(socket){
             if(socket.username === username){
                 findIfReady(username , data.lobby.pressedReady , function(ifReady){
@@ -98,11 +98,17 @@ $(function () {
             });
     });
 
+    socket.on("all ready but not enough players" , function(data){
+        $("#timer-message").text("Wait for more players");
+        $('body').dimmer('show');
+    });
+
     socket.on("joined empty room" , function(data){
         appendText("#message-aria" , "<div class='ui vertical segment'><p>" + data.message + "</div>");
     });
 
     socket.on("new user joined" , function(data){
+        $('body').dimmer('hide');
         appendText("#message-aria" , "<div class='ui vertical segment'><p>" + data.message + "</div>");
     });
 
@@ -147,7 +153,7 @@ $(function () {
     });
 
     socket.on("sending players" , function(data){
-        console.log(data.lobby);
+        console.log("din sending players" , data.lobby);
         data.lobby.sockets.forEach(function(socket){
                 appendText("#player-game-list" , "<div class='card' id='player'><div class='card-header'>" + socket.username + "</div><div class='card-body'><p class='card-text'>Score : " + socket.score + "</p></div></div>");            
         });
