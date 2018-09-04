@@ -35,7 +35,7 @@ $(function () {
     socket.on("sending lobby data" , function(data){
         $("#room-name").text(data.lobby.name);
         $("#player-list").text("");
-        console.log("in sending lobby data" , data.lobby);
+        console.log(data.message , data.lobby);
         data.lobby.sockets.forEach(function(socket){
             if(socket.username === username){
                 findIfReady(username , data.lobby.pressedReady , function(ifReady){
@@ -153,7 +153,7 @@ $(function () {
     });
 
     socket.on("sending players" , function(data){
-        console.log("din sending players" , data.lobby);
+        console.log(data.lobby);
         data.lobby.sockets.forEach(function(socket){
                 appendText("#player-game-list" , "<div class='card' id='player'><div class='card-header'>" + socket.username + "</div><div class='card-body'><p class='card-text'>Score : " + socket.score + "</p></div></div>");            
         });

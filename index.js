@@ -98,7 +98,6 @@ function getCountries(callback){
 clearDatabase();
 
 let minimumNumberOfPlayers = 2;
-
 io.on("connection" , function(socket){
 
     socket.on("newUser" , function(data){
@@ -110,7 +109,7 @@ io.on("connection" , function(socket){
             createLobby(foundSocket , data , function(createdLobby){
                 socket.join("room-"+ createdLobby.roomNo);
                 getLobbyByRoom(createdLobby.roomNo , function(foundLobby){
-                    io.to(foundSocket.socketId).emit("sending lobby data" , {lobby : foundLobby});                
+                    io.to(foundSocket.socketId).emit("sending lobby data" , {lobby : foundLobby , message : "from specific room room"});                
                     io.to(foundSocket.socketId).emit("joined empty room" , { message : "You joined room " + foundLobby.roomNo + ", which is empty!"});
                 });
 
@@ -125,21 +124,19 @@ io.on("connection" , function(socket){
                 foundSocket.roomNo = data.room;
                 updateSocket(foundSocket);
                 foundLobby.sockets.push(foundSocket);
+                foundLobby.pressedReady = [];
                 updateLobby(foundLobby);
                 socket.join("room-"+ foundLobby.roomNo);
                 socket.to('room-' + foundLobby.roomNo).emit('new user joined', {message : "User " + foundSocket.username + " joined this room" });
-                resetReadyStatus(foundLobby , function(updatedLobby){
-                    io.in('room-' + updatedLobby.roomNo).emit("sending lobby data" , {lobby : updatedLobby});
-                    io.to(foundSocket.socketId).emit("new message" , {message : "You joined room " + updatedLobby.name});
-                });
-
+                io.in('room-' + foundLobby.roomNo).emit("sending lobby data" , {lobby : foundLobby , message : "from join specific room"});
+                io.to(foundSocket.socketId).emit("new message" , {message : "You joined room " + foundLobby.name});
             });
         });
     });
 
     socket.on("send lobbies list" , function(data){
         getLobbiesByLang(data.language , function(foundLobbies){
-                io.to(socket.id).emit("sending lobbies" , {lobbies : foundLobbies});
+            io.to(socket.id).emit("sending lobbies" , {lobbies : foundLobbies});
         });
     });
 
@@ -168,15 +165,16 @@ io.on("connection" , function(socket){
             getLobbyByRoom(foundSocket.roomNo , function(foundLobby){
                 let url = "/";
                 foundSocket.roomNo = 0;
+                foundSocket.pressedReady = [];
                 updateSocket(foundSocket);
-                removeSocketFromRoom(foundSocket , foundLobby);
-                resetReadyStatus(foundLobby , function(updatedLobby){
-                    socket.to('room-' + updatedLobby.roomNo).emit('user left lobby', {message :  "User " + foundSocket.username + " left this lobby"});
-                    socket.to('room-' + updatedLobby.roomNo).emit("sending lobby data" , {lobby : updatedLobby});                
-                    socket.leave("room-" + updatedLobby.roomNo);
+                removeSocketFromRoom(foundSocket , foundLobby , function(updatedLobby){
+                    console.log("after leave din removeSocket" ,updatedLobby);
+                    updateLobby(updatedLobby);
+                    socket.to('room-' + updatedLobby.roomNo).emit("sending lobby data" , {lobby : updatedLobby , message : "from pressed leave"});                
                     removeEmptyRooms();
                 });
-
+                socket.to('room-' + foundLobby.roomNo).emit('user left lobby', {message :  "User " + foundSocket.username + " left this lobby"});
+                socket.leave("room-" + foundLobby.roomNo);
                 io.to(socket.id).emit("reset page");
             });
         });
@@ -235,18 +233,21 @@ io.on("connection" , function(socket){
             if(foundSocket.roomNo != undefined){
                 getLobbyByRoom(foundSocket.roomNo , function(foundLobby){
                     if(foundLobby != undefined){
-                        removeSocketFromRoom(foundSocket , foundLobby);
-                        resetReadyStatus(foundLobby , function(updatedLobby){
-                            socket.to('room-' + updatedLobby.roomNo).emit('user left lobby', {message :  "User " + foundSocket.username + " left this lobby"});
-                            socket.to('room-' + updatedLobby.roomNo).emit("sending lobby data" , {lobby : updatedLobby});  
+                        foundLobby.pressedReady = [];
+                        updateLobby(foundLobby);
+                        removeSocketFromRoom(foundSocket , foundLobby , function(updatedLobby){
+                            updateLobby(updatedLobby , function(update){
+                                socket.to('room-' + update.roomNo).emit("sending lobby data" , {lobby : update , message : "from disconnect"});  
+                            });
                         });
- 
-                    };
 
+                        socket.to('room-' + foundLobby.roomNo).emit('user left lobby', {message :  "User " + foundSocket.username + " left this lobby"});
+                        removeSocket(foundSocket);
+                        removeEmptyRooms();
+                    };
                 });
             };
-            removeSocket(foundSocket);
-            removeEmptyRooms();
+
         });        
     }); 
 });
@@ -324,21 +325,17 @@ function removeSocket(socket){
     });
 };
 
-function removeSocketFromRoom(socket , room){
+function removeSocketFromRoom(socket , room , callback){
     if(room != undefined){
         for(let i = 0 ; i < room.sockets.length ; i++){
             if(room.sockets[i].socketId === socket.socketId){
+                console.log("before splice" , room.sockets);
                 room.sockets.splice(i , 1);
-                Lobby.findByIdAndUpdate(room._id , room , function(err , updatedRoom){
-                    if(err){
-                        console.log(err);
-                    }
-                    else{
-                        console.log("socket removed from room");
-                    };
-                });
+                console.log("after splice" , room.sockets);
+                callback(room);
             };
         };
+        
     };
 
 };
@@ -460,13 +457,19 @@ function updateSocket(socket){
     });
 };
 
-function updateLobby(lobby){
+function updateLobby(lobby , callback){
+    if(callback === undefined){
+        callback = function(){
+            console.log("frtgr");
+        }
+    };
     Lobby.findByIdAndUpdate(lobby._id , lobby ,  function(err , foundLobby){
         if(err){
             console.log(err);
         }
         else{
             console.log("lobby updated");
+            callback(foundLobby);
         };
     });
 };
