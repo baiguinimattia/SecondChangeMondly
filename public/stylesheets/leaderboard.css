@@ -1,0 +1,23 @@
+.jumbotron{
+    text-align: center;
+    font-size: 60px;
+    font-weight: 700;
+    border: 5px solid #286895;
+    color: #286895;
+    background-color: #FCFBEF;
+    margin: 2% 15%;
+    overflow: auto;
+}
+
+.card#end-result{
+    width: 50%;
+    margin: 20px 25%;
+}
+
+#player-content{
+    background-color: #FCFBEF;
+    border: 4px solid #286895;
+    border-radius: 15px;
+    text-align: center;
+    font-weight: 400;
+}

@@ -98,8 +98,8 @@
                                 </div>
                                 <div id="input-aria">
                                         <input type="text" placeholder="Enter message" id="message">
-                                        <button class="ui button" id="send-message"><i class="paper plane">Send</i></button>
-                                        <button class="ui button" id="leave-room"><p id="leave-p">Leave lobby</p></button>
+                                        <button class="btn btn-light" id="send-message"><i class="paper plane">Send</i></button>
+                                        <button class="btn btn-light" id="leave-room"><p id="leave-p">Leave lobby</p></button>
                                 </div>
                           </div>
                           <div class="four wide column">
@@ -118,8 +118,13 @@
 
 <div class="ui grid hidden" id="game-aria">
         <div class="twelve wide column">
-                <div id="game-board">
-                                                
+                <div class="container" id="game-board">
+                        <div id="question-section">
+
+                        </div>  
+                        <div id="response-section">
+
+                        </div>
                 </div>
         </div>
         <div class="four wide column">
@@ -130,6 +135,17 @@
                 </div>
         </div>
 </div>
+
+<div class="hidden" id="leaderboard-area">
+        <div class="jumbotron">
+                Game results
+        </div>
+        <div class="container" id="results">
+
+        </div>
+</div>
+
+
 
 <div class="ui dimmer">
         <div class="content">

@@ -14,7 +14,10 @@ $(function () {
         $(".ui.cards").text("");
         var i ;
         for( i = 0 ; i < data.lobbies.length ; i++){
-            $(".ui.cards").append("<div class='card'><div class='content'><div class='header'>" + data.lobbies[i].name + "</div><div class='meta'>Owner : " + data.lobbies[i].owner + "</div><div class='description'>Language permited : " + data.lobbies[i].language + "</div></div><div class='extra content'><div class='ui basic blue button' id='btn-room' data-type-room='" + data.lobbies[i].roomNo + "'>Join room</div></div></div>");
+            if(data.lobbies[i].ifInGame === false){
+                $(".ui.cards").append("<div class='card'><div class='content'><div class='header'>" + data.lobbies[i].name + "</div><div class='meta'>Owner : " + data.lobbies[i].owner + "</div><div class='description'>Language permited : " + data.lobbies[i].language + "</div></div><div class='extra content'><div class='ui basic blue button' id='btn-room' data-type-room='" + data.lobbies[i].roomNo + "'>Join room</div></div></div>");
+            };
+
         };
         if(i === data.lobbies.length){
             $("div#btn-room.ui.basic.blue.button").click(function(event){
@@ -35,9 +38,7 @@ $(function () {
     socket.on("sending lobby data" , function(data){
         $("#room-name").text(data.lobby.name);
         $("#player-list").text("");
-        console.log(data.message , data.lobby);
         data.lobby.sockets.forEach(function(socket){
-            console.log("sa vedem ce cate ori intra" , socket.username);
             if(socket.username === username){
                 findIfReady(username , data.lobby.pressedReady , function(ifReady){
                     if(ifReady){
@@ -105,12 +106,12 @@ $(function () {
     });
 
     socket.on("joined empty room" , function(data){
-        appendText("#message-aria" , "<div class='ui vertical segment'><div class='message-bubble'><p class=message-text>" + data.message + "</p></div></div>");
+        appendText("#message-aria" , "<div class='ui vertical segment'><div class='message-bubble'><p class='message-text'>" + data.message + "</p></div></div>");
     });
 
     socket.on("new user joined" , function(data){
         $('body').dimmer('hide');
-        appendText("#message-aria" , "<div class='ui vertical segment'><div class='message-bubble'><p>" + data.message + "</p></div></div>");
+        appendText("#message-aria" , "<div class='ui vertical segment'><div class='message-bubble'><p class='message-text'>" + data.message + "</p></div></div>");
     });
 
 
@@ -136,10 +137,10 @@ $(function () {
 
     socket.on("new message" , function(data){
         if(data.location === "right"){
-            appendText("#message-aria" , "<div class='ui vertical segment '><div class='message-bubble'><p class='right'>" + data.message + "</p></div></div>");
+            appendText("#message-aria" , "<div class='ui vertical segment'><div class='message-bubble right'><p class='message-text'>" + data.message + "</p></div></div>");
         }
         else{
-            appendText("#message-aria" , "<div class='ui vertical segment '><div class='message-bubble'><p>" + data.message + "</p></div></div>");            
+            appendText("#message-aria" , "<div class='ui vertical segment'><div class='message-bubble'><p class='message-text'>" + data.message + "</p></div></div>");
         }
     });
 
@@ -148,19 +149,118 @@ $(function () {
     });
 
     socket.on("game can begin" , function(data){
-        socket.emit("request games");
-        socket.emit("send timer", {timer : data.timer});
+        socket.emit("request games" , {username : data.username});
+        socket.emit("begin timer", {timer : data.timer});
         socket.emit("send lobby data");
     });
 
-    socket.on("sending game data" , function(data){
-        console.log("vine jocul" , data.game);
-        appendGame(data.game);
+    socket.on("sending games list" , function(data){
+        if(data.games.length){
+            socket.emit("send first game" , {games : data.games});
+        };
     });
 
+    socket.on("first game" , function(data){
+        appendGame(data.game , function(){
+                if(data.game.type === "image recognition"){
+                    $(".btn-secondary#variant").click(function(){
+                        if($(this).text() === data.game.response){
+                            $(this).removeClass("btn-secondary");
+                            $(this).removeClass("btn-danger");
+                            $(this).addClass("btn-success");
+                            socket.emit("correct response");
+                        }
+                        else{
+                            $(this).removeClass("btn-secondary");
+                            $(this).removeClass("btn-success");
+                            $(this).addClass("btn-danger");
+                            socket.emit("wrong response");
+                        };
+                        $(".btn#variant").each(function(){
+                            $(this).unbind("click");
+                        });
+                        socket.emit("send lobby data");
+                    });
+                };
+                if(data.game.type === "correct word"){
+                    $("button.btn.btn-light#send").click(function(){
+                        if($("#word").val() === data.game.response){
+                            socket.emit("correct response");
+                        }
+                        else{
+                            socket.emit("wrong response");
+                        };
+                        $(this).unbind("click");
+                        socket.emit("send lobby data");
+                    });
+                };
+
+        });
+    });
+
+    socket.on("wait for the other players" , function(data){
+        $("#timer-message").text("Waiting for the other players to respond");
+        $('body').dimmer('show');
+    });
+
+    socket.on("send next game" , function(data){
+        if(data.username === username){
+            socket.emit("send next game");
+        };
+    });
+
+    socket.on("sending next game" , function(data){
+        $('body').dimmer('hide');
+        console.log("vine joc" , data.game);
+        appendGame(data.game , function(){
+            if(data.game.type === "image recognition"){
+                $(".btn-secondary#variant").click(function(){
+                    if($(this).text() === data.game.response){
+                        $(this).removeClass("btn-secondary");
+                        $(this).removeClass("btn-danger");
+                        $(this).addClass("btn-success");
+                        socket.emit("correct response");
+                    }
+                    else{
+                        $(this).removeClass("btn-secondary");
+                        $(this).removeClass("btn-success");
+                        $(this).addClass("btn-danger");
+                        socket.emit("wrong response");
+                    };
+                    $(".btn#variant").each(function(){
+                        $(this).unbind("click");
+                    });
+                    socket.emit("send lobby data");
+                });
+            };
+            if(data.game.type === "correct word"){
+                $("button.btn.btn-light#send").click(function(){
+                    if($("#word").val() === data.game.response){
+                        socket.emit("correct response");
+                    }
+                    else{
+                        socket.emit("wrong response");
+                    };
+                    $(this).unbind("click");
+                    socket.emit("send lobby data");
+                });
+            };
+
+    });
+    });
+
+    socket.on("game ended" , function(data){
+        socket.emit("update data");
+        $('body').dimmer('hide');
+        appendLeaderboard(data.lobby , function(){
+            $("#game-aria").transition('zoom');
+            $("#leaderboard-area").transition('zoom');
+        });
+        
+    }); 
 
     socket.on("sending players" , function(data){
-        console.log(data.lobby);
+        $("#player-game-list").text("");
         data.lobby.sockets.forEach(function(socket){
                 appendText("#player-game-list" , "<div class='card' id='player'><div class='card-header'>" + socket.username + "</div><div class='card-body'><p class='card-text'>Score : " + socket.score + "</p></div></div>");            
         });
@@ -168,8 +268,10 @@ $(function () {
 
     socket.on("sending timer" , function(data){
         if(data.timer === 0){
-            $('#chat-aria').transition('horizontal flip');
-            $(".ui.grid#game-aria").css("display"  , "flex");
+            $('#chat-aria').transition('horizontal flip' , function(){
+                $(".ui.grid#game-aria").css("display"  , "flex");
+            });
+
         }
         else{
             $("#timer-message").text(data.timer);
@@ -177,19 +279,18 @@ $(function () {
             setTimeout(function(){
                 $('body').dimmer('hide');
                 let timer = data.timer - 1;
-                socket.emit("send timer" , { timer : timer})
+                socket.emit("send timer" , { timer : timer , username : username})
             } , 1000)
         };
-
-        
     });
+
 
     $("#leave-room").click(function(event){
         socket.emit("user pressed leave");
     }); 
 
     socket.on("user left lobby" , function(data){
-        appendText("#message-aria" , "<div class='ui vertical segment '><p>" + data.message + "</div>");            
+        appendText("#message-aria" , "<div class='ui vertical segment'><div class='message-bubble'><p class=message-text>" + data.message + "</p></div></div>");       
     });
 
     socket.on("redirect" , function(data){
@@ -232,6 +333,30 @@ function findIfReady(username , array , callback){
     };
 };
 
-function appendGame(game){
-    appendText("#game-board" , "<div class='ui cards'><div class='card'><div class='image'><img src='" + "/img/" + data.image + ".jpg" + "' id='image-game'></div><div class='content'><div class='meta'><button class='ui basic green button'></button></div><div class='description' id='game-statemenet'>" + game.statement + "</div></div><div class='extra content'><div class='ui for buttons'><div class='ui basic green button'>" + game.variants[0] + "</div><div class='ui basic red button'>" + game.variants[1] + "</div><div class='ui basic green button'>" + game.variants[2] + "</div><div class='ui basic red button'>" + game.variants[4] + "</div></div></div></div></div>");
+function appendGame(game , callback){
+    if(game.type === "image recognition"){
+        let buttons = "<button type='button' class='btn btn-secondary' id='variant'>" + game.variants[0] + "</button><button type='button' class='btn btn-secondary' id='variant'>" + game.variants[1] + "</button><button type='button' class='btn btn-secondary' id='variant'>" + game.variants[2] + "</button><button type='button' class='btn btn-secondary' id='variant'>" + game.variants[3] + "</button>";
+        $("#question-section").text("");
+        $("#response-section").text("");
+        appendText("#question-section" , "<img src='/img/" + game.image + ".jpg' class='img-fluid'><p id='statement'>" + game.statement + "</p>");
+        appendText("#response-section" , "<div class='btn-group' role='group' aria-label='Basic example'>" + buttons + "</div>");
+        callback();
+    };
+    if(game.type === "correct word"){
+        $("#question-section").text("");
+        $("#response-section").text("");
+        appendText("#question-section" , "<img src='/img/" + game.image + ".jpg' class='img-fluid'><p id='statement'>" + game.statement + "</p>");
+        appendText("#response-section" , "<input type='text' name='word' id='word' placeholder='word'><button type='button' class='btn btn-light' id='send'>Confirm</button>");
+        callback();
+    }
+
+};
+
+function appendLeaderboard(lobby , callback){
+    lobby.sockets.forEach(function(socket){
+        console.log(socket);
+        let ratio = (socket.correctResponses/(socket.correctResponses + socket.wrongResponses)) * 100;
+        appendText("#results" , "<div class='ui cards' id='leaderboards'><div class='card' id='end-result'><div class='content' id='player-content'><div class='header'>" + socket.username + "</div><div class='meta'>Ratio : " + ratio + "%</div><div class='description'>Score : " + socket.score + "</div></div></div></div>");
+    })
+    callback()
 };

@@ -8,7 +8,8 @@ var SocketSchema  = new mongoose.Schema({
     language : String,
     score : {type : Number , default : 0},
     wrongResponses : {type : Number , default : 0},
-    correctResponses : {type : Number , default : 0}
+    correctResponses : {type : Number , default : 0},
+    bonus : {type : Boolean , default : false}
 });
 
 module.exports = mongoose.model("Socket" , SocketSchema);
